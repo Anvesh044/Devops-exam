@@ -3,13 +3,195 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My First Webpage</title>
+    <meta name="description" content="A powerful developer tool for saving, categorizing, and searching code snippets with syntax highlighting and local storage.">
+    <meta name="keywords" content="code snippets, developer tools, programming, syntax highlighting, code organization">
+    <meta name="author" content="Code Snippet Manager">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Code Snippet Manager">
+    <meta property="og:description" content="A powerful developer tool for saving, categorizing, and searching code snippets">
+    <meta property="og:url" content="https://yourdomain.com">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:title" content="Code Snippet Manager">
+    <meta property="twitter:description" content="A powerful developer tool for saving, categorizing, and searching code snippets">
+    
+    <title>Code Snippet Manager</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📝</text></svg>">
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
 <body>
-<header>
-    <img src="image.jpg" alt="Logo">
-</header>
-<h1>This is a sample content</h1>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-content">
+                <h1><i class="fas fa-code"></i> Code Snippet Manager</h1>
+                <div class="header-actions">
+                    <button class="btn btn-primary" onclick="openAddModal()">
+                        <i class="fas fa-plus"></i> Add Snippet
+                    </button>
+                    <button class="btn btn-secondary" onclick="exportSnippets()">
+                        <i class="fas fa-download"></i> Export
+                    </button>
+                    <input type="file" id="importFile" accept=".json" style="display: none;" onchange="importSnippets(event)">
+                    <button class="btn btn-secondary" onclick="document.getElementById('importFile').click()">
+                        <i class="fas fa-upload"></i> Import
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Search and Filter Section -->
+        <div class="search-section">
+            <div class="search-container">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="searchInput" placeholder="Search snippets by title, description, or content..." onkeyup="searchSnippets()">
+                </div>
+                <div class="filter-section">
+                    <select id="languageFilter" onchange="applyFilters()">
+                        <option value="">All Languages</option>
+                        <option value="javascript">JavaScript</option>
+                        <option value="python">Python</option>
+                        <option value="java">Java</option>
+                        <option value="cpp">C++</option>
+                        <option value="html">HTML</option>
+                        <option value="css">CSS</option>
+                        <option value="sql">SQL</option>
+                        <option value="bash">Bash</option>
+                        <option value="json">JSON</option>
+                        <option value="xml">XML</option>
+                    </select>
+                    <select id="tagFilter" onchange="applyFilters()">
+                        <option value="">All Tags</option>
+                    </select>
+                    <button class="btn btn-outline" onclick="clearFilters()">
+                        <i class="fas fa-times"></i> Clear Filters
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Snippets Grid -->
+            <div id="snippetsGrid" class="snippets-grid">
+                <!-- Snippets will be dynamically inserted here -->
+            </div>
+
+            <!-- Empty State -->
+            <div id="emptyState" class="empty-state" style="display: none;">
+                <i class="fas fa-code-branch"></i>
+                <h3>No code snippets yet</h3>
+                <p>Start building your collection by adding your first snippet!</p>
+                <button class="btn btn-primary" onclick="openAddModal()">
+                    <i class="fas fa-plus"></i> Add Your First Snippet
+                </button>
+            </div>
+        </main>
+
+        <!-- Add/Edit Modal -->
+        <div id="snippetModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 id="modalTitle">Add New Snippet</h2>
+                    <span class="close" onclick="closeModal()">&times;</span>
+                </div>
+                <form id="snippetForm" onsubmit="saveSnippet(event)">
+                    <div class="form-group">
+                        <label for="snippetTitle">Title *</label>
+                        <input type="text" id="snippetTitle" required placeholder="Enter snippet title...">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="snippetDescription">Description</label>
+                        <textarea id="snippetDescription" placeholder="Brief description of what this snippet does..."></textarea>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="snippetLanguage">Language *</label>
+                            <select id="snippetLanguage" required>
+                                <option value="">Select Language</option>
+                                <option value="javascript">JavaScript</option>
+                                <option value="python">Python</option>
+                                <option value="java">Java</option>
+                                <option value="cpp">C++</option>
+                                <option value="html">HTML</option>
+                                <option value="css">CSS</option>
+                                <option value="sql">SQL</option>
+                                <option value="bash">Bash</option>
+                                <option value="json">JSON</option>
+                                <option value="xml">XML</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="snippetTags">Tags</label>
+                            <input type="text" id="snippetTags" placeholder="Enter tags separated by commas...">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="snippetCode">Code *</label>
+                        <textarea id="snippetCode" required placeholder="Paste your code here..." rows="10"></textarea>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Save Snippet
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- View Modal -->
+        <div id="viewModal" class="modal">
+            <div class="modal-content modal-large">
+                <div class="modal-header">
+                    <h2 id="viewTitle"></h2>
+                    <div class="modal-actions">
+                        <button class="btn btn-outline btn-sm" onclick="copyToClipboard()">
+                            <i class="fas fa-copy"></i> Copy
+                        </button>
+                        <button class="btn btn-outline btn-sm" onclick="editSnippet()">
+                            <i class="fas fa-edit"></i> Edit
+                        </button>
+                        <button class="btn btn-danger btn-sm" onclick="deleteSnippet()">
+                            <i class="fas fa-trash"></i> Delete
+                        </button>
+                        <span class="close" onclick="closeViewModal()">&times;</span>
+                    </div>
+                </div>
+                <div class="snippet-details">
+                    <div class="snippet-meta">
+                        <span class="language-badge" id="viewLanguage"></span>
+                        <span class="date" id="viewDate"></span>
+                    </div>
+                    <p id="viewDescription"></p>
+                    <div id="viewTags" class="tags-container"></div>
+                    <div class="code-container">
+                        <pre><code id="viewCode" class="language-javascript"></code></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Toast Notifications -->
+        <div id="toast" class="toast"></div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+    <script src="app.js"></script>
 </body>
 </html>

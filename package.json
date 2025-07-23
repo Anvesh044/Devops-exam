@@ -1,0 +1,42 @@
+{
+  "name": "code-snippet-manager",
+  "version": "1.0.0",
+  "description": "A powerful, developer-friendly tool for saving, categorizing, and searching code snippets",
+  "main": "index.html",
+  "scripts": {
+    "start": "python3 -m http.server 8000 || python -m http.server 8000",
+    "dev": "live-server --port=8000 --open=index.html",
+    "serve": "npx serve . -p 8000",
+    "build": "echo 'No build process needed for vanilla JS app'",
+    "test": "echo 'No tests configured yet'"
+  },
+  "keywords": [
+    "code-snippets",
+    "developer-tools",
+    "javascript",
+    "html5",
+    "css3",
+    "syntax-highlighting",
+    "local-storage",
+    "responsive-design",
+    "portfolio-project"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/code-snippet-manager.git"
+  },
+  "homepage": "https://yourusername.github.io/code-snippet-manager",
+  "devDependencies": {
+    "live-server": "^1.2.2"
+  },
+  "engines": {
+    "node": ">=12.0.0"
+  },
+  "browserslist": [
+    "last 2 versions",
+    "> 1%",
+    "not dead"
+  ]
+}
